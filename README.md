@@ -12,23 +12,13 @@ With the rise of online review platforms, the issue of fake reviews has become i
 
 ---
 
-<!-- -->## SECTION 3 : CREDITS / PROJECT CONTRIBUTION
-<!-- -->
-<!-- -->| Official Full Name  | Student ID (MTech Applicable)  | Work Items (Who Did What) | Email (Optional) |
-<!-- -->| :------------ |:---------------:| :-----| :-----|
-<!-- -->| Liu Siyan | A0285857H | Model Design and construction, Back-end developent and Integration, Data collation, cleansing and preliminary analysis, Practical validation, Documentation and Figures| E1221669@u.nus.edu|
-<!-- -->| Lin Zijun | A0285897Y | Front end development, Front end and back end Integration, Deployment, User Guide| E1221709@u.nus.edu |
-
-
-<!-- -->---
-
 ## SECTION 3 : VIDEO OF SYSTEM MODELLING & USE CASE DEMO
 
 Video link: 
 
 ---
 
-## SECTION 5 : USER GUIDE
+## SECTION 4 : USER GUIDE
 
 `Refer to appendix <Installation & User Guide> in project report at Github Folder: ProjectReport`
 
