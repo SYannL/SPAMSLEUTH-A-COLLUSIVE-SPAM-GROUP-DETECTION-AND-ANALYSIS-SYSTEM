@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Social Media</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="Social Media" />
+    <script type="application/x-javascript">
+      addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); }
+    </script>
+    <!-- Custom Theme files -->
+    <link
+      href="{{ url_for('static', filename='css/style.css') }}"
+      rel="stylesheet"
+      type="text/css"
+      media="all"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/font-awesome.css') }}"
+    />
+    <!-- Font-Awesome-Icons-CSS -->
+    <!-- //Custom Theme files -->
+    <!-- web font -->
+    <link
+      href="//fonts.googleapis.com/css?family=Josefin+Sans:100,100i,300,300i,400,400i,600,600i,700,700i&amp;subset=latin-ext"
+      rel="stylesheet"
+    />
+    <!-- //web font -->
+  </head>
+  <body>
+    <!-- main -->
+    <div class="main-agileits">
+      <h1>Social Media Detector</h1>
+      <div class="mainw3-agileinfo form">
+        <div class="contact-w3left">
+          <!-- <img src="{{ url_for('static', filename="img/fighting.jpg") }}"> -->
+          <img src="{{ url_for('static', filename="images/3.png") }}" alt=" " />
+        </div>
+        <div class="contact-grid agileits">
+          <div class="button-container" id="button-container">
+            <div class="">
+              <input
+                type="submit"
+                value="Chatbot"
+                id="chatbot-btn"
+                onclick="showPipe()"
+              />
+            </div>
+            <div class="">
+              <input
+                type="submit"
+                value="CSV Analyzer"
+                id="analyzer-btn"
+                onclick="showAnalyzer()"
+              />
+            </div>
+          </div>
+          <input
+            type="submit"
+            value="Prepare pipeline"
+            id="pipe-btn"
+            onclick="showChat()"
+            style="margin-top: 30px; display: block"
+          />
+          <div
+            class=""
+            id="time-warning"
+            style="margin-top: 20px; display: none; color: white"
+          >
+            Processing... It might take a very long time.
+          </div>
+          <div id="chat-container" style="margin-top: 20px; display: none">
+            <input
+              type="text"
+              id="user-input"
+              placeholder="Please type here..."
+            />
+            <button id="send-btn">Send</button>
+            <div id="chat-box" style="margin-top: 30px; color: white"></div>
+          </div>
+          <div id="analyzer-container" style="display: none">
+            <input
+              type="file"
+              id="csv-file"
+              style="margin-top: 30px; display: none; color: white"
+              accept=".csv"
+            />
+            <input
+              id="upload-btn"
+              value="Analyze"
+              type="submit"
+              style="margin-top: 30px; display: none"
+            />
+            <div
+              id="new-content-area"
+              style="margin-top: 30px; color: white"
+            ></div>
+            <input
+              type="text"
+              id="user-input2"
+              placeholder="Please enter a specific product ID that you want to look into..."
+              style="margin-top: 30px; display: none; color: white"
+            />
+            <input
+              id="generate-btn"
+              value="generate"
+              type="submit"
+              style="margin-top: 30px; display: none"
+            />
+            <div
+              id="image1"
+              style="margin-top: 30px; display: none; color: white"
+            >
+              <h2>Restaurant Reviewers</h2>
+              <img id="restaurantImage" src="" alt="Restaurant Reviewers" />
+            </div>
+            <div
+              id="image2"
+              style="margin-top: 30px; display: none; color: white"
+            >
+              <h2>Spam Group Relationships</h2>
+              <img id="spamImage" src="" alt="Spam Group Relationships" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- //main -->
+
+    <script>
+      const chatBox = document.getElementById("chat-box");
+      const userInput = document.getElementById("user-input");
+      const sendBtn = document.getElementById("send-btn");
+      const chatbotBtn = document.getElementById("chatbot-btn");
+      const analyzerContainer = document.getElementById("analyzer-container");
+      const analyzerBtn = document.getElementById("analyzer-btn");
+      const uploadBtn = document.getElementById("upload-btn");
+      const csvFileInput = document.getElementById("csv-file");
+      const newContentArea = document.getElementById("new-content-area");
+
+      function addUserMessage(message) {
+        chatBox.innerHTML += `<div><strong>You:</strong> ${message}</div>`;
+      }
+
+      function addBotMessage(message) {
+        chatBox.innerHTML += `<div><strong>Bot:</strong> ${message}</div>`;
+      }
+
+      function sendMessageToBackend(message) {
+        var xhr = new XMLHttpRequest();
+
+        // 设置POST请求，发送到后端的URL
+        xhr.open("POST", "/your_backend_endpoint", true);
+
+        // 设置请求头
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        // 当请求完成时执行这个函数
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+              // 如果请求成功，添加机器人的回复到聊天框中
+              addBotMessage(xhr.responseText);
+            } else {
+              // 如果请求失败，显示错误消息
+              addBotMessage(
+                "Sorry I cannot understand it. Can you say that again?"
+              );
+            }
+          }
+        };
+
+        // 发送用户输入到后端
+        xhr.send(JSON.stringify({ message: message }));
+      }
+
+      function sendMessage() {
+        const message = userInput.value.trim();
+        if (message !== "") {
+          addUserMessage(message);
+          // 发送用户输入到后端
+          sendMessageToBackend(message);
+          userInput.value = "";
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+      }
+
+      sendBtn.addEventListener("click", sendMessage);
+      userInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          sendMessage();
+        }
+      });
+      
+      function showPipe() {
+        // 显示聊天框，隐藏上传按钮
+        document.getElementById("pipe-btn").style.display = "block";
+        document.getElementById("time-warning").style.display = "none";
+        analyzerContainer.style.display = "none";
+      }
+
+      function showChat() {
+        // 显示聊天框，隐藏上传按钮
+        document.getElementById("time-warning").style.display = "block";
+        analyzerContainer.style.display = "none";
+
+        // 发送请求给后端，准备管道
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/prepare_pipeline", true);
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+              // 如果成功准备管道，显示成功消息
+              document.getElementById("time-warning").innerText = JSON.parse(
+                xhr.responseText
+              ).message;
+
+              document.getElementById("chat-container").style.display = "block";
+
+            } else {
+              // 如果失败，显示错误消息
+              document.getElementById("time-warning").innerText =
+                "Error: Unable to prepare pipeline. Please try again.";
+            }
+          }
+        };
+        xhr.send();
+      }
+
+      function showAnalyzer() {
+        // 显示聊天框，隐藏上传按钮
+        document.getElementById("chat-container").style.display = "none";
+        document.getElementById("time-warning").style.display = "none";
+        document.getElementById("pipe-btn").style.display = "none";
+        analyzerContainer.style.display = "block";
+        // 显示上传按钮和上传文件 input
+        document.getElementById("csv-file").style.display = "block";
+        document.getElementById("upload-btn").style.display = "block";
+        document.getElementById("new-content-area").style.display = "block";
+      }
+
+      uploadBtn.addEventListener("click", function () {
+        // 获取上传的文件
+        const file = csvFileInput.files[0];
+
+        if (file) {
+          // 创建一个FormData对象，用于发送文件数据
+          const formData = new FormData();
+          formData.append("csv_file", file);
+          newContentArea.innerHTML = `<div>Processing...</div>`;
+
+          // 发送文件到后端
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "/upload_csv", true);
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.status === 200) {
+                // 如果请求成功，处理后端返回的数据
+                const response = JSON.parse(xhr.responseText);
+                const fresult = JSON.parse(response.results); // Parse fresult from the response
+
+                // 清空结果区域
+                newContentArea.innerHTML = "";
+                fresult.forEach((item) => {
+                  const itemDiv = document.createElement("div");
+                  itemDiv.innerHTML = `<strong>Restaurant ID:</strong> ${
+                    item.Restaurant_id
+                  }, <strong>Confidence Level:</strong> ${
+                    item.Confidence_level
+                  }, <strong>Members:</strong> ${item.Members.join(", ")}`;
+                  newContentArea.appendChild(itemDiv);
+                });
+
+                document.getElementById("user-input2").style.display = "block";
+                document.getElementById("generate-btn").style.display = "block";
+              } else {
+                // 如果请求失败，显示错误消息
+                alert("An error occurred while uploading the CSV file.");
+              }
+            }
+          };
+          xhr.send(formData);
+        } else {
+          // 如果没有选择文件，弹出提示框
+          alert("Please upload a CSV file first.");
+        }
+      });
+
+      document
+        .getElementById("generate-btn")
+        .addEventListener("click", function () {
+          const userInput2 = document
+            .getElementById("user-input2")
+            .value.trim();
+
+          // Check if userInput2 is a number
+          if (!isNaN(userInput2)) {
+            // If userInput2 is a number, proceed with generating the image
+            if (userInput2 !== "") {
+              // Send user input to the backend
+              var xhr = new XMLHttpRequest();
+              xhr.open("POST", "/generate_image", true);
+              xhr.setRequestHeader("Content-Type", "application/json");
+              xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                  if (xhr.status === 200) {
+                    // If request is successful, handle the response
+                    document.getElementById("image1").style.display = "block";
+                    document.getElementById("image2").style.display = "block";
+                    const response = JSON.parse(xhr.responseText);
+
+                    // Display restaurant image
+                    const restaurantImage =
+                      document.getElementById("restaurantImage");
+                    restaurantImage.src = response.restaurant_image_path;
+
+                    // Display spam image
+                    const spamImage = document.getElementById("spamImage");
+                    spamImage.src = response.spam_image_path;
+                  } else {
+                    // If request fails, show an error message
+                    alert("An error occurred while generating the image.");
+                  }
+                }
+              };
+              xhr.send(JSON.stringify({ user_input: userInput2 }));
+            } else {
+              // If userInput2 is empty, show an error message
+              alert("Please enter some text first.");
+            }
+          } else {
+            // If userInput2 is not a number, show a warning message
+            alert("Please enter an ID number.");
+          }
+        });
+    </script>
+  </body>
+</html>
